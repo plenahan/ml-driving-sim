@@ -31,8 +31,9 @@ class SimEnv(gym.Env):
         # Initialize Pygame
         if human:
             self.renderer = Renderer([self.car], self.map, screen_size)
+
+        # Temporary Manual Controls
         while human:
-            self.renderer.render()
             throttle = 0.0
             brake = 0.0
             steering = 0.0
@@ -46,12 +47,10 @@ class SimEnv(gym.Env):
             if keys[pygame.K_RIGHT]:
                 steering += 1.0
             self.step((throttle, brake, steering))
-
-        self.state = None
+        # Temporary Manual Controls End
 
     def reset(self, seed=None, options=None):
-        self.state = np.array([0, 0, 0, 0], dtype=np.float64)
-        return self.state, {}
+        self.car = Car(1.0, self.map.start, heading=self.map.direction)
     
     def step(self, action):
         if self.human:
