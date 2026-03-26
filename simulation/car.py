@@ -75,7 +75,7 @@ class Car:
             (*right_ray[0], right_ray[0][0] + right_ray[1][0] * right_dist, right_ray[0][1] + right_ray[1][1] * right_dist),
         ]
 
-        return left_dist, right_dist, forward_dist
+        return left_dist, forward_dist, right_dist
     
     def ray_cast(self, ray, rectangles):
         origin, direction = ray
