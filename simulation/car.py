@@ -8,9 +8,9 @@ class Car:
             mass, 
             position, 
             heading = np.array([1.0, 0.0]), # unit vector
-            steering_range = 15, # degrees tires can turn from center 
-            acceleration_rate = 0.3,
-            braking_rate = 0.3,
+            steering_range = 30, # degrees tires can turn from center 
+            acceleration_rate = 0.4,
+            braking_rate = 0.4,
         ):
         self.mass = mass
         self.position = position
@@ -21,6 +21,7 @@ class Car:
         self.braking_rate = braking_rate
         self.rotation = math.atan2(heading[1], heading[0])
         self.rays = []
+        self.time = 0.0
 
         self.size = (20, 10)  # width, length
         
@@ -29,6 +30,7 @@ class Car:
         accel = self.acceleration_rate * throttle
         decel = self.braking_rate * brake
         net_accel = accel - decel
+        self.time += delta_time
 
         # Compute velocity
         forward = self.steer_vector(steering)
@@ -46,9 +48,12 @@ class Car:
         self.position = front - self.heading * self.size[0] / 2
 
     def steer_vector(self, steering_input):
-        x, y = self.heading
+        return self.angle_to_vector(self.heading, -steering_input * self.steering_range)
+    
+    def angle_to_vector(self,vector, angle):
+        x, y = vector
         # Convert steering input to rotation angle in radians
-        angle_rad = math.radians(-steering_input * self.steering_range)
+        angle_rad = math.radians(angle)
     
         # 2D rotation matrix
         cos_a = math.cos(angle_rad)
@@ -59,23 +64,29 @@ class Car:
     
         return np.array([x_rot, y_rot], dtype=np.float32)
     
-    def detect_obstacles(self, map, renderer=None):
+    def detect_obstacles(self, map):
         # Cast rays in three directions: left, forward,right
-        left_ray = (self.position, self.steer_vector(-2))
-        forward_ray = (self.position, self.steer_vector(0))
-        right_ray = (self.position, self.steer_vector(2))
+        far_left_ray = (self.position, self.angle_to_vector(self.heading, -90))
+        left_ray = (self.position, self.angle_to_vector(self.heading, -45))
+        forward_ray = (self.position, self.heading)
+        right_ray = (self.position, self.angle_to_vector(self.heading, 45))
+        far_right_ray = (self.position, self.angle_to_vector(self.heading, 90))
 
+        far_left_dist = self.ray_cast(far_left_ray, map.rectangles)
         left_dist = self.ray_cast(left_ray, map.rectangles)
         forward_dist = self.ray_cast(forward_ray, map.rectangles)
         right_dist = self.ray_cast(right_ray, map.rectangles)
+        far_right_dist = self.ray_cast(far_right_ray, map.rectangles)
 
         self.rays = [
+            (*far_left_ray[0], far_left_ray[0][0] + far_left_ray[1][0] * far_left_dist, far_left_ray[0][1] + far_left_ray[1][1] * far_left_dist),
             (*left_ray[0], left_ray[0][0] + left_ray[1][0] * left_dist, left_ray[0][1] + left_ray[1][1] * left_dist),
             (*forward_ray[0], forward_ray[0][0] + forward_ray[1][0] * forward_dist, forward_ray[0][1] + forward_ray[1][1] * forward_dist),
             (*right_ray[0], right_ray[0][0] + right_ray[1][0] * right_dist, right_ray[0][1] + right_ray[1][1] * right_dist),
+            (*far_right_ray[0], far_right_ray[0][0] + far_right_ray[1][0] * far_right_dist, far_right_ray[0][1] + far_right_ray[1][1] * far_right_dist),
         ]
 
-        return left_dist, right_dist, forward_dist
+        return far_left_dist, left_dist, forward_dist, right_dist, far_right_dist
     
     def ray_cast(self, ray, rectangles):
         origin, direction = ray

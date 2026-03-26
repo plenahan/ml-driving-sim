@@ -1,3 +1,5 @@
+from turtle import speed
+
 import gymnasium as gym
 from gymnasium import spaces
 import numpy as np
@@ -11,8 +13,8 @@ class SimEnv(gym.Env):
         super().__init__()
 
         self.observation_space = spaces.Box(
-            low=np.array([0.0, 0.0, 0.0], dtype=np.float32),          # speed, path, distance
-            high=np.array([1000.0, 1.0, 10000.0], dtype=np.float32),  # reasonable caps
+            low=np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], dtype=np.float32),          # speed, path, distance
+            high=np.array([1000.0, 1.0, 10000.0, 10000.0, 10000.0, 10000.0, 10000.0], dtype=np.float32),  # reasonable caps
             dtype=np.float32
         )
         
@@ -51,13 +53,12 @@ class SimEnv(gym.Env):
     def _get_observation(self):
         speed = self.car.speed
         path_covered = self.car.path_progress(self.map)
-        (_, _, forward) = self.car.detect_obstacles(self.map, self.renderer)
-        forward = np.clip(np.nan_to_num(forward, posinf=10000.0), 0.0, 10000.0)
+        (far_left, left, forward, right, far_right) = self.car.detect_obstacles(self.map)
 
         if self.renderer is not None:
             self.renderer.rays = self.car.rays
 
-        return np.array([speed, path_covered, forward], dtype=np.float32)
+        return np.array([speed, path_covered, far_left, left, forward, right, far_right], dtype=np.float32)
 
     def step(self, action):
         throttle, brake, steering = np.asarray(action, dtype=np.float32)
@@ -70,29 +71,18 @@ class SimEnv(gym.Env):
         self.car.update(throttle, brake, steering, 0.5)
 
         obs = self._get_observation()
-        speed, path_covered, forward = obs
+        speed, path_covered, far_left, left, forward, right, far_right = obs
 
         self.episode_steps += 1
-        progress_delta = path_covered - self.last_progress
+        path_delta = path_covered - self.last_progress
         self.last_progress = path_covered
 
-        reward = (progress_delta * 200.0) + (speed * 0.005)
-        if progress_delta < 0:
-            reward += progress_delta * 50.0
+        # --- Core reward: progress ---
+        reward = path_delta * 20.0
+        reward += self.car.speed * 0.8
+        reward += min(far_left, left, forward, right, far_right) * 0.01
 
-        # Penalize conflicting longitudinal controls.
-        if throttle > 0.2 and brake > 0.2:
-            reward -= 0.1 * float(min(throttle, brake))
-
-        # Penalize getting stuck with little movement/progress for a long time.
-        if abs(progress_delta) < 1e-4 and speed < 0.2:
-            self.no_progress_steps += 1
-        else:
-            self.no_progress_steps = 0
-
-        if self.no_progress_steps > 50:
-            reward -= 0.2
-
+        # --- Collision / termination ---
         collided = forward < (self.car.size[0] / 2.0)
         finished_lap = path_covered >= 0.999
         terminated = collided or finished_lap
@@ -100,8 +90,9 @@ class SimEnv(gym.Env):
 
         if collided:
             reward -= 100.0
+
         if finished_lap:
-            reward += 300.0
+            reward += 20.0
 
         if self.renderer is not None:
             self.renderer.render()
