@@ -4,7 +4,7 @@ from ppo import PPO
 from simulation.sim_env import SimEnv
 
 def train(total_steps, actor_path, critic_path):
-    env = SimEnv(human=False)
+    env = SimEnv(human=True)
     assert(type(env.observation_space) == gym.spaces.Box)
     assert(type(env.action_space) == gym.spaces.Box)
     model = PPO(env)
@@ -14,7 +14,7 @@ def train(total_steps, actor_path, critic_path):
 
 
 def play(actor_path, critic_path=None, max_steps=20000):
-    env = SimEnv(human=True)
+    env = SimEnv(human=False)
     model = PPO(env)
     model.load(actor_path, critic_path)
 
@@ -37,7 +37,7 @@ def main():
     subparsers = parser.add_subparsers(dest="mode", required=True)
 
     train_parser = subparsers.add_parser("train")
-    train_parser.add_argument("--steps", type=int, default=2000000)
+    train_parser.add_argument("--steps", type=int, default=20000)
     train_parser.add_argument("--actor-path", type=str, default="checkpoints/actor.pt")
     train_parser.add_argument("--critic-path", type=str, default="checkpoints/critic.pt")
 

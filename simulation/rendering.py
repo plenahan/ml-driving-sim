@@ -30,8 +30,8 @@ class Renderer:
         self.window.fill((0, 0, 0))
 
         self.window.fill((255, 255, 255))
-        for rectangle in self.map.rectangles:
-            self.rectangle(*rectangle, self.barrier_color)
+        #for rectangle in self.map.rectangles:
+            #self.rectangle(*rectangle, self.barrier_color)
         for line in self.map.path:
             self.line(*line, self.path_color)
         for ray in self.rays:

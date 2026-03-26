@@ -27,8 +27,9 @@ class PPO:
         )
 
     def _init_hyperparameters(self):
-        self.iterations_per_batch = 4096
-        self.max_iterations_per_episode = 1200
+        self.iterations_per_batch = 16384
+        self.max_iterations_per_episode = 4096
+        self.max_episodes_per_batch = 8
         self.gamma = 0.99
         self.gae_lambda = 0.95
 
@@ -42,7 +43,7 @@ class PPO:
         self.entropy_coefficient = 0.01
         self.max_grad_norm = 0.5
 
-        self.action_std = [0.15, 0.15, 0.2]
+        self.action_std = [0.2, 0.2, 0.6]
 
     def learn(self, num_iterations):
         t_so_far = 0
@@ -125,8 +126,9 @@ class PPO:
         batch_episode_progresses = []
 
         t_so_far = 0
+        episodes = 0
 
-        while t_so_far < self.iterations_per_batch:
+        while t_so_far < self.iterations_per_batch and episodes < self.max_episodes_per_batch:
             episode_rewards = []
             episode_values = []
             episode_dones = []
@@ -147,7 +149,6 @@ class PPO:
 
                 action, log_probability = self.get_action(observation)
                 observation, reward, terminated, truncated, info = self.env.step(action)
-
                 done = terminated or truncated
                 episode_return += reward
 
@@ -161,6 +162,7 @@ class PPO:
                 if done or t_so_far >= self.iterations_per_batch:
                     break
 
+            episodes += 1
             episode_advantages, episode_returns = self.compute_gae(episode_rewards, episode_values, episode_dones)
             batch_advantages.extend(episode_advantages)
             batch_returns.extend(episode_returns)
