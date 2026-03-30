@@ -1,5 +1,6 @@
 import torch
 import os
+import matplotlib.pyplot as plt
 from network import FeedForwardNN
 from torch.distributions import MultivariateNormal
 from torch.optim import Adam
@@ -25,6 +26,13 @@ class PPO:
         self.observation_scale = torch.tensor(
             np.maximum(self.env.observation_space.high, 1e-6), dtype=torch.float32
         )
+
+        self.training_history = {
+            "timesteps": [],
+            "avg_ep_len": [],
+            "avg_ep_return": [],
+            "avg_ep_progress": [],
+        }
 
     def _init_hyperparameters(self):
         self.iterations_per_batch = 16384
@@ -114,6 +122,41 @@ class PPO:
                 "avg_ep_progress:",
                 float(np.mean(batch_episode_progresses)),
             )
+
+            self.training_history["timesteps"].append(int(t_so_far))
+            self.training_history["avg_ep_len"].append(float(np.mean(batch_episode_lengths)))
+            self.training_history["avg_ep_return"].append(float(np.mean(batch_episode_returns)))
+            self.training_history["avg_ep_progress"].append(float(np.mean(batch_episode_progresses)))
+
+    def plot_training_metrics(self, output_dir="checkpoints/training_plots", show=False):
+        timesteps = self.training_history["timesteps"]
+        if len(timesteps) == 0:
+            print("No training metrics available to plot.")
+            return
+
+        os.makedirs(output_dir, exist_ok=True)
+
+        metric_specs = [
+            ("avg_ep_len", "Average Episode Length"),
+            ("avg_ep_return", "Average Episode Return"),
+            ("avg_ep_progress", "Average Episode Progress"),
+        ]
+
+        for metric_key, title in metric_specs:
+            plt.figure(figsize=(8, 4.5))
+            plt.plot(timesteps, self.training_history[metric_key], linewidth=2)
+            plt.title(f"{title} vs Total Timesteps")
+            plt.xlabel("Total Timesteps")
+            plt.ylabel(title)
+            plt.grid(True, alpha=0.3)
+            plt.tight_layout()
+
+            output_path = os.path.join(output_dir, f"{metric_key}.png")
+            plt.savefig(output_path)
+
+            if show:
+                plt.show()
+            plt.close()
 
     def rollout(self):
         batch_observations = []

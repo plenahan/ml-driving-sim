@@ -14,6 +14,18 @@ Train headless and save checkpoints:
 python main.py train --steps 2000000 --actor-path checkpoints/actor.pt --critic-path checkpoints/critic.pt
 ```
 
+Train and save per-metric line charts over total timesteps:
+
+```bash
+python main.py train --steps 2000000 --actor-path checkpoints/actor.pt --critic-path checkpoints/critic.pt --plot-dir checkpoints/training_plots
+```
+
+Optional: show charts interactively while also saving them:
+
+```bash
+python main.py train --steps 2000000 --show-plots
+```
+
 Play with deterministic policy rendering the simulation:
 
 ```bash
