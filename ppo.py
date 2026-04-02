@@ -35,8 +35,8 @@ class PPO:
         }
 
     def _init_hyperparameters(self):
-        self.iterations_per_batch = 16384
-        self.max_iterations_per_episode = 4096
+        self.iterations_per_batch = 16384 * 2
+        self.max_iterations_per_episode = 8192
         self.max_episodes_per_batch = 8
         self.gamma = 0.99
         self.gae_lambda = 0.95
