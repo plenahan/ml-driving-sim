@@ -3,3 +3,5 @@ __pycache__/
 .venv/
 .idea/
 checkpoints/
+.DS_Store
+previous/
