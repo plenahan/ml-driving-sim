@@ -53,8 +53,10 @@ class PPO:
 
         self.action_std = [0.2, 0.2, 0.6]
 
-    def learn(self, num_iterations):
+    def learn(self, num_iterations, best_actor_path=None, best_critic_path=None):
         t_so_far = 0
+        best_metric = -float("inf")
+        track_best = best_actor_path is not None and best_critic_path is not None
         while t_so_far < num_iterations:
             (
                 batch_observations,
@@ -123,10 +125,16 @@ class PPO:
                 float(np.mean(batch_episode_progresses)),
             )
 
+            avg_progress = float(np.mean(batch_episode_progresses))
             self.training_history["timesteps"].append(int(t_so_far))
             self.training_history["avg_ep_len"].append(float(np.mean(batch_episode_lengths)))
             self.training_history["avg_ep_return"].append(float(np.mean(batch_episode_returns)))
-            self.training_history["avg_ep_progress"].append(float(np.mean(batch_episode_progresses)))
+            self.training_history["avg_ep_progress"].append(avg_progress)
+
+            if track_best and avg_progress > best_metric:
+                best_metric = avg_progress
+                self.save(best_actor_path, best_critic_path)
+                print(f"  new best avg_ep_progress={avg_progress:.3f}, saved to {best_actor_path}")
 
     def plot_training_metrics(self, output_dir="checkpoints/training_plots", show=False):
         timesteps = self.training_history["timesteps"]
