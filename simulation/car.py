@@ -157,20 +157,35 @@ class Car:
         return min_distance
 
     def path_progress(self, map):
+        progress, _ = self._closest_path_segment(map)
+        return progress
+
+    def path_tangent(self, map):
+        _, tangent = self._closest_path_segment(map)
+        return tangent
+
+    def _closest_path_segment(self, map):
         closest_distance = float('inf')
-        distance_along_path = 0.0 # from closest
-        distance = 0.0 # total
+        distance_along_path = 0.0  # from closest
+        distance = 0.0  # total
+        best_tangent = np.array([1.0, 0.0], dtype=np.float32)
+
         for line in map.path:
             x1, y1, x2, y2 = line
-            line_length = math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
+            line_length = math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
 
             (dist_to_line, projected) = self.dist_to_line((x1, y1), (x2, y2))
             if dist_to_line < closest_distance and projected > -0.1:
                 closest_distance = dist_to_line
                 distance_along_path = distance + projected
+                if line_length > 1e-8:
+                    best_tangent = np.array(
+                        [(x2 - x1) / line_length, (y2 - y1) / line_length],
+                        dtype=np.float32,
+                    )
             distance += line_length
 
-        return distance_along_path / map.path_length
+        return distance_along_path / map.path_length, best_tangent
         
     def dist_to_line(self, line_start, line_end):
         p = np.array(self.position, dtype=np.float32)

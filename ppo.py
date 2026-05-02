@@ -1,10 +1,34 @@
 import torch
+import torch.nn as nn
 import os
 import matplotlib.pyplot as plt
 from network import FeedForwardNN
-from torch.distributions import MultivariateNormal
+from torch.distributions import Normal, Independent
 from torch.optim import Adam
 import numpy as np
+
+
+class RunningMeanStd:
+    def __init__(self, shape, epsilon=1e-4):
+        self.mean = np.zeros(shape, dtype=np.float64)
+        self.var = np.ones(shape, dtype=np.float64)
+        self.count = epsilon
+
+    def update(self, x):
+        batch_mean = np.mean(x, axis=0)
+        batch_var = np.var(x, axis=0)
+        batch_count = x.shape[0]
+
+        delta = batch_mean - self.mean
+        total_count = self.count + batch_count
+        new_mean = self.mean + delta * batch_count / total_count
+        m_a = self.var * self.count
+        m_b = batch_var * batch_count
+        m2 = m_a + m_b + np.square(delta) * self.count * batch_count / total_count
+
+        self.mean = new_mean
+        self.var = m2 / total_count
+        self.count = total_count
 
 
 class PPO:
@@ -14,18 +38,26 @@ class PPO:
         self.observation_space = env.observation_space.shape[0]
         self.action_space = env.action_space.shape[0]
 
-        self.actor = FeedForwardNN(self.observation_space, self.action_space)
-        self.critic = FeedForwardNN(self.observation_space, 1)
+        self.actor = FeedForwardNN(self.observation_space, self.action_space, output_gain=0.01)
+        self.critic = FeedForwardNN(self.observation_space, 1, output_gain=1.0)
 
-        self.action_std = torch.tensor(self.action_std, dtype=torch.float32)
-        self.covariance_matrix = torch.diag(self.action_std * self.action_std)
+        self.log_std = nn.Parameter(
+            torch.full((self.action_space,), self.initial_log_std, dtype=torch.float32)
+        )
 
-        self.actor_optimizer = Adam(self.actor.parameters(), lr=self.actor_learning_rate)
+        self.action_low = torch.tensor(env.action_space.low, dtype=torch.float32)
+        self.action_high = torch.tensor(env.action_space.high, dtype=torch.float32)
+        self.action_scale = (self.action_high - self.action_low) / 2.0
+        self.action_bias = (self.action_high + self.action_low) / 2.0
+
+        self.actor_optimizer = Adam(
+            list(self.actor.parameters()) + [self.log_std],
+            lr=self.actor_learning_rate,
+        )
         self.critic_optimizer = Adam(self.critic.parameters(), lr=self.critic_learning_rate)
 
-        self.observation_scale = torch.tensor(
-            np.maximum(self.env.observation_space.high, 1e-6), dtype=torch.float32
-        )
+        self.obs_rms = RunningMeanStd(shape=(self.observation_space,))
+        self.obs_clip = 10.0
 
         self.training_history = {
             "timesteps": [],
@@ -51,7 +83,7 @@ class PPO:
         self.entropy_coefficient = 0.01
         self.max_grad_norm = 0.5
 
-        self.action_std = [0.2, 0.2, 0.6]
+        self.initial_log_std = -0.5
 
     def learn(self, num_iterations, best_actor_path=None, best_critic_path=None):
         t_so_far = 0
@@ -60,7 +92,7 @@ class PPO:
         while t_so_far < num_iterations:
             (
                 batch_observations,
-                batch_actions,
+                batch_pre_squash,
                 batch_log_probabilities,
                 batch_returns,
                 batch_advantages,
@@ -82,12 +114,12 @@ class PPO:
                     mb_idx = indices[start:start + self.minibatch_size]
 
                     mb_observations = batch_observations[mb_idx]
-                    mb_actions = batch_actions[mb_idx]
+                    mb_pre_squash = batch_pre_squash[mb_idx]
                     mb_old_log_probabilities = batch_log_probabilities[mb_idx]
                     mb_returns = batch_returns[mb_idx]
                     mb_advantages = batch_advantages[mb_idx]
 
-                    values, current_log_probabilities, entropy = self.evaluate(mb_observations, mb_actions)
+                    values, current_log_probabilities, entropy = self.evaluate(mb_observations, mb_pre_squash)
 
                     ratio = torch.exp(current_log_probabilities - mb_old_log_probabilities)
                     surrogate1 = ratio * mb_advantages
@@ -99,6 +131,7 @@ class PPO:
                     self.actor_optimizer.zero_grad()
                     actor_loss.backward()
                     torch.nn.utils.clip_grad_norm_(self.actor.parameters(), self.max_grad_norm)
+                    torch.nn.utils.clip_grad_norm_([self.log_std], self.max_grad_norm)
                     self.actor_optimizer.step()
 
                     self.critic_optimizer.zero_grad()
@@ -123,6 +156,8 @@ class PPO:
                 float(np.mean(batch_episode_returns)),
                 "avg_ep_progress:",
                 float(np.mean(batch_episode_progresses)),
+                "log_std:",
+                self.log_std.detach().tolist(),
             )
 
             avg_progress = float(np.mean(batch_episode_progresses))
@@ -168,7 +203,7 @@ class PPO:
 
     def rollout(self):
         batch_observations = []
-        batch_actions = []
+        batch_pre_squash = []
         batch_log_probabilities = []
         batch_returns = []
         batch_advantages = []
@@ -186,7 +221,8 @@ class PPO:
 
             episode_return = 0.0
             observation, _ = self.env.reset()
-            done = False
+            terminated = False
+            truncated = False
             info = {}
             episode_i = -1
 
@@ -198,7 +234,7 @@ class PPO:
                 normalized_observation = self._normalize_observation(observation_tensor)
                 value = self.critic(normalized_observation).item()
 
-                action, log_probability = self.get_action(observation)
+                action, pre_squash, log_probability = self.get_action(observation)
                 observation, reward, terminated, truncated, info = self.env.step(action)
                 done = terminated or truncated
                 episode_return += reward
@@ -207,22 +243,35 @@ class PPO:
                 episode_values.append(value)
                 episode_dones.append(done)
 
-                batch_actions.append(action)
+                batch_pre_squash.append(pre_squash)
                 batch_log_probabilities.append(log_probability)
 
                 if done or t_so_far >= self.iterations_per_batch:
                     break
 
+            # Bootstrap if the episode wasn't terminated by the env (truncated, batch-cut, or step-cap)
+            if terminated:
+                last_value = 0.0
+            else:
+                with torch.no_grad():
+                    last_obs_tensor = torch.tensor(observation, dtype=torch.float32)
+                    last_value = self.critic(self._normalize_observation(last_obs_tensor)).item()
+
             episodes += 1
-            episode_advantages, episode_returns = self.compute_gae(episode_rewards, episode_values, episode_dones)
+            episode_advantages, episode_returns = self.compute_gae(
+                episode_rewards, episode_values, episode_dones, last_value=last_value
+            )
             batch_advantages.extend(episode_advantages)
             batch_returns.extend(episode_returns)
             batch_episode_lengths.append(episode_i + 1)
             batch_episode_returns.append(episode_return)
             batch_episode_progresses.append(float(info.get("progress", 0.0)))
 
-        batch_observations = torch.tensor(np.array(batch_observations), dtype=torch.float32)
-        batch_actions = torch.tensor(np.array(batch_actions), dtype=torch.float32)
+        batch_observations_np = np.array(batch_observations)
+        self.obs_rms.update(batch_observations_np)
+
+        batch_observations = torch.tensor(batch_observations_np, dtype=torch.float32)
+        batch_pre_squash = torch.tensor(np.array(batch_pre_squash), dtype=torch.float32)
         batch_log_probabilities = torch.tensor(np.array(batch_log_probabilities), dtype=torch.float32)
         batch_returns = torch.tensor(np.array(batch_returns), dtype=torch.float32)
         batch_advantages = torch.tensor(np.array(batch_advantages), dtype=torch.float32)
@@ -231,7 +280,7 @@ class PPO:
 
         return (
             batch_observations,
-            batch_actions,
+            batch_pre_squash,
             batch_log_probabilities,
             batch_returns,
             batch_advantages,
@@ -241,50 +290,50 @@ class PPO:
         )
 
     def _normalize_observation(self, observation_tensor):
-        return observation_tensor / self.observation_scale
-
-    def _policy_mean(self, observations):
-        raw_output = self.actor(observations)
-        throttle = torch.sigmoid(raw_output[..., 0:1])
-        brake = torch.sigmoid(raw_output[..., 1:2])
-        steering = torch.tanh(raw_output[..., 2:3])
-        return torch.cat([throttle, brake, steering], dim=-1)
+        mean = torch.tensor(self.obs_rms.mean, dtype=torch.float32)
+        std = torch.tensor(np.sqrt(self.obs_rms.var) + 1e-8, dtype=torch.float32)
+        return torch.clamp((observation_tensor - mean) / std, -self.obs_clip, self.obs_clip)
 
     def _distribution(self, observations):
         normalized_observations = self._normalize_observation(observations)
-        mean = self._policy_mean(normalized_observations)
-        return MultivariateNormal(mean, self.covariance_matrix)
+        raw_mean = self.actor(normalized_observations)
+        std = torch.exp(self.log_std).expand_as(raw_mean)
+        return Independent(Normal(raw_mean, std), 1)
+
+    def _squash_to_action(self, pre_squash):
+        return self.action_bias + self.action_scale * torch.tanh(pre_squash)
 
     def get_action(self, observation):
         observation_tensor = torch.tensor(observation, dtype=torch.float32)
         distribution = self._distribution(observation_tensor)
 
         with torch.no_grad():
-            action = distribution.sample()
-            log_probability = distribution.log_prob(action)
+            pre_squash = distribution.sample()
+            log_probability = distribution.log_prob(pre_squash)
+            action = self._squash_to_action(pre_squash)
 
-        action_np = action.detach().numpy()
-        action_np = np.clip(action_np, self.env.action_space.low, self.env.action_space.high)
-        return action_np, float(log_probability.item())
+        return action.numpy(), pre_squash.numpy(), float(log_probability.item())
 
     def predict(self, observation, deterministic=True):
         observation_tensor = torch.tensor(observation, dtype=torch.float32)
-        distribution = self._distribution(observation_tensor)
 
         with torch.no_grad():
+            normalized = self._normalize_observation(observation_tensor)
+            raw_mean = self.actor(normalized)
             if deterministic:
-                action = distribution.mean
+                pre_squash = raw_mean
             else:
-                action = distribution.sample()
+                std = torch.exp(self.log_std).expand_as(raw_mean)
+                pre_squash = Normal(raw_mean, std).sample()
+            action = self._squash_to_action(pre_squash)
 
-        action_np = action.detach().numpy()
-        return np.clip(action_np, self.env.action_space.low, self.env.action_space.high)
+        return action.numpy()
 
-    def compute_gae(self, rewards, values, dones):
+    def compute_gae(self, rewards, values, dones, last_value=0.0):
         advantages = []
         returns = []
         gae = 0.0
-        next_value = 0.0
+        next_value = last_value
 
         for i in reversed(range(len(rewards))):
             not_done = 1.0 - float(dones[i])
@@ -296,9 +345,9 @@ class PPO:
 
         return advantages, returns
 
-    def evaluate(self, batch_observations, batch_actions):
+    def evaluate(self, batch_observations, batch_pre_squash):
         distribution = self._distribution(batch_observations)
-        log_probabilities = distribution.log_prob(batch_actions)
+        log_probabilities = distribution.log_prob(batch_pre_squash)
         entropy = distribution.entropy()
 
         normalized_observations = self._normalize_observation(batch_observations)
@@ -312,11 +361,29 @@ class PPO:
             os.makedirs(actor_dir, exist_ok=True)
         if critic_dir:
             os.makedirs(critic_dir, exist_ok=True)
-        torch.save(self.actor.state_dict(), actor_path)
+        torch.save(
+            {
+                "actor": self.actor.state_dict(),
+                "log_std": self.log_std.detach(),
+                "obs_rms_mean": self.obs_rms.mean,
+                "obs_rms_var": self.obs_rms.var,
+                "obs_rms_count": self.obs_rms.count,
+            },
+            actor_path,
+        )
         torch.save(self.critic.state_dict(), critic_path)
 
     def load(self, actor_path, critic_path=None):
-        self.actor.load_state_dict(torch.load(actor_path, map_location="cpu"))
+        actor_blob = torch.load(actor_path, map_location="cpu", weights_only=False)
+        if isinstance(actor_blob, dict) and "actor" in actor_blob:
+            self.actor.load_state_dict(actor_blob["actor"])
+            with torch.no_grad():
+                self.log_std.copy_(actor_blob["log_std"])
+            if "obs_rms_mean" in actor_blob:
+                self.obs_rms.mean = actor_blob["obs_rms_mean"]
+                self.obs_rms.var = actor_blob["obs_rms_var"]
+                self.obs_rms.count = actor_blob["obs_rms_count"]
+        else:
+            self.actor.load_state_dict(actor_blob)
         if critic_path is not None:
             self.critic.load_state_dict(torch.load(critic_path, map_location="cpu"))
-

@@ -11,9 +11,19 @@ class SimEnv(gym.Env):
         super().__init__()
 
         self.observation_space = spaces.Box(
-            low=np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], dtype=np.float32),          # speed, path, distance
-            high=np.array([1000.0, 1.0, 10000.0, 10000.0, 10000.0, 10000.0, 10000.0, 10000.0, 10000.0], dtype=np.float32),  # reasonable caps
-            dtype=np.float32
+            low=np.array(
+                [0.0, 0.0,
+                 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+                 -1.0, -1.0, -1.0, -1.0],
+                dtype=np.float32,
+            ),
+            high=np.array(
+                [1000.0, 1.0,
+                 10000.0, 10000.0, 10000.0, 10000.0, 10000.0, 10000.0, 10000.0,
+                 1.0, 1.0, 1.0, 1.0],
+                dtype=np.float32,
+            ),
+            dtype=np.float32,
         )
         
         self.action_space = spaces.Box(
@@ -51,13 +61,22 @@ class SimEnv(gym.Env):
 
     def _get_observation(self):
         speed = self.car.speed
-        path_covered = self.car.path_progress(self.map)
+        path_covered, path_tangent = self.car._closest_path_segment(self.map)
         (far_left, mid_left, left, forward, right, mid_right, far_right) = self.car.detect_obstacles(self.map)
 
         if self.renderer is not None:
             self.renderer.rays = self.car.rays
 
-        return np.array([speed, path_covered, far_left, mid_left, left, forward, right, mid_right, far_right], dtype=np.float32)
+        heading = self.car.heading
+        return np.array(
+            [
+                speed, path_covered,
+                far_left, mid_left, left, forward, right, mid_right, far_right,
+                float(heading[0]), float(heading[1]),
+                float(path_tangent[0]), float(path_tangent[1]),
+            ],
+            dtype=np.float32,
+        )
 
     def step(self, action):
         throttle, brake, steering = np.asarray(action, dtype=np.float32)
@@ -70,16 +89,19 @@ class SimEnv(gym.Env):
         self.car.update(throttle, brake, steering, 0.3)
 
         obs = self._get_observation()
-        speed, path_covered, far_left, mid_left, left, forward, right, mid_right, far_right = obs
+        speed = obs[0]
+        path_covered = obs[1]
+        forward = obs[5]
 
         self.episode_steps += 1
         path_delta = path_covered - self.last_progress
         self.last_progress = path_covered
 
-        # --- Core reward: progress ---
+        # --- Core reward: progress along the path ---
         reward = path_delta * 25.0
-        reward += self.car.speed * 0.5
-        reward += min(far_left, mid_left, left, forward, right, mid_right, far_right) * 0.008
+
+        # Small per-step time penalty discourages stalling without rewarding aimless speed
+        reward -= 0.01
 
         # --- Collision / termination ---
         collided = forward < (self.car.size[0] / 2.0)
@@ -88,10 +110,10 @@ class SimEnv(gym.Env):
         truncated = self.episode_steps >= self.max_episode_steps
 
         if collided:
-            reward -= 100.0
+            reward -= 50.0
 
         if finished_lap:
-            reward += 20.0
+            reward += 100.0
 
         if self.renderer is not None and self.ten % 50 == 0:
             self.renderer.render()
