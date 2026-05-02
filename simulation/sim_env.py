@@ -116,7 +116,8 @@ class SimEnv(gym.Env):
         if finished_lap:
             reward += 100.0
 
-        self.renderer.render()
+        if self.renderer is not None:
+            self.renderer.render()
         self.ten += 1
 
         info = {
