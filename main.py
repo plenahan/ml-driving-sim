@@ -1,3 +1,5 @@
+import time
+
 import gymnasium as gym
 import argparse
 from ppo import PPO
@@ -26,6 +28,7 @@ def play(actor_path, critic_path=None, max_steps=20000):
     info = {}
 
     while not done and step_count < max_steps:
+        time.sleep(0.01)
         action = model.predict(observation, deterministic=True)
         observation, reward, terminated, truncated, info = env.step(action)
         done = terminated or truncated
