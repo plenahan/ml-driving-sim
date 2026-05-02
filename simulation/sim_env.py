@@ -39,6 +39,7 @@ class SimEnv(gym.Env):
         self.last_progress = 0.0
         self.no_progress_steps = 0
         self.ten = 0
+        self.delta_time = 0.3
 
         self.human = human
         self.renderer = None
@@ -86,7 +87,7 @@ class SimEnv(gym.Env):
         brake = np.clip(brake, 0, 1)
         steering = np.clip(steering, -1, 1)
 
-        self.car.update(throttle, brake, steering, 0.3)
+        self.car.update(throttle, brake, steering, self.delta_time)
 
         obs = self._get_observation()
         speed = obs[0]

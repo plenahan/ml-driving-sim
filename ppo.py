@@ -151,13 +151,13 @@ class PPO:
                 "t_so_far:",
                 int(t_so_far),
                 "avg_ep_len:",
-                float(np.mean(batch_episode_lengths)),
+                f"{np.mean(batch_episode_lengths):.3f}",
                 "avg_ep_return:",
-                float(np.mean(batch_episode_returns)),
+                f"{np.mean(batch_episode_returns):.3f}",
                 "avg_ep_progress:",
-                float(np.mean(batch_episode_progresses)),
+                f"{np.mean(batch_episode_progresses):.3f}",
                 "log_std:",
-                self.log_std.detach().tolist(),
+                [f"{x:.3f}" for x in self.log_std.detach().tolist()],
             )
 
             avg_progress = float(np.mean(batch_episode_progresses))
