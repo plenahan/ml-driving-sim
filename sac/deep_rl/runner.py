@@ -4,6 +4,10 @@ from controller import Controller
 from replay_buffer import ReplayBuffer
 from deep_rl import timed_decorator
 
+class TargetReachedException(Exception):
+    """Custom exception to break out of the runner at the exact target frame."""
+    pass
+
 
 class Runner:
     """

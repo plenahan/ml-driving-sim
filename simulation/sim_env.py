@@ -9,7 +9,7 @@ from simulation.rendering import Renderer
 class SimEnv(gym.Env):
     def __init__(self, human=False, screen_size=(600, 600), max_episode_steps=20000):
         super().__init__()
-        self.first_turn_threshold = 0.005  # Calculated based on map1
+        self.first_turn_threshold = 0.010  # Calculated based on map1
         self.steps_to_turn = None
 
         self.observation_space = spaces.Box(

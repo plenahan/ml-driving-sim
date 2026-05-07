@@ -20,6 +20,7 @@ from replay_buffer import ReplayBuffer
 from runner import Runner
 from controller import Controller
 import matplotlib.pyplot as plt
+from runner import Runner, TargetReachedException
 
 
 class MultiExperiment:
@@ -270,6 +271,7 @@ class SACExperiment(Experiment):
         return np.mean(loss, axis=0), np.std(loss, axis=0)
 
     def run(self):
+        # 1. Warmup is back to normal (no try/except)
         episode_buffer, _, _, _, runner_duration = self.runner.run_steps(step:=self.config_params['warmup_steps'])
         self.replay_buffer.append(episode_buffer)
         print(f"Warmed up replay buffer with {len(self.replay_buffer)} samples and took {runner_duration} seconds.")
@@ -278,6 +280,7 @@ class SACExperiment(Experiment):
         best_model_path = self.config_params.get('best_model_path')
 
         while step < self.config_params['max_steps']:
+            # 2. Main loop is back to normal (no try/except)
             episode_buffer, rollout_returns, rollout_lengths, rollout_infos, runner_duration = self.runner.run_steps(self.config_params['runner_steps'])
             episode_loss_mean, episode_loss_std, learn_duration = self._learn_from_episodes(episode_buffer)
             step += self.config_params['runner_steps']
@@ -291,5 +294,51 @@ class SACExperiment(Experiment):
                     best_progress = avg_ep_progress
                     th.save(self.learner.model.actor.state_dict(), best_model_path)
                     print(f"  new best avg_ep_progress={avg_ep_progress:.3f}, saved to {best_model_path}")
+
+                # =======================================================
+                # EARLY STOPPING TRIPWIRE FOR SAC (BATCH LEVEL)
+                # =======================================================
+                max_progress_in_batch = float(np.asarray(rollout_infos['progress']).max())
+                
+                # Make sure this matches your sim_env.py threshold! (e.g., 0.100 or 0.215)
+                if max_progress_in_batch >= 0.010: 
+                    print(f"\n[TARGET REACHED] Run successfully completed in {step} total steps!")
+                    
+                    import os
+                    # Safely save to the root directory
+                    root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+                    save_path = os.path.join(root_dir, "sac_final_results.txt")
+                    
+                    with open(save_path, "a") as f:
+                        f.write(f"{step}\n")
+                        
+                    break # Instantly kills the run and lets your Python script move to Run 2
+                # =======================================================
+
+                #=======================================================
+
+                # EARLY STOPPING TRIPWIRE FOR SAC
+
+                # =======================================================
+
+                # max_progress_in_batch = float(np.asarray(rollout_infos['progress']).max())
+
+                # if max_progress_in_batch >= 0.010:
+
+                #     print(f"\n[TARGET REACHED] Run successfully completed in {step} total steps!")
+
+                   
+
+                #     # Write this specific golden number to a clean file for your t-test
+
+                #     with open("sac_final_results.txt", "a") as f:
+
+                #         f.write(f"{step}\n")
+
+                       
+
+                #     break # This instantly kills the run and lets your Python script move to Run 2
+
+                # =======================================================
 
         return super().run()

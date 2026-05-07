@@ -175,7 +175,7 @@ class PPO:
             # EARLY STOPPING TRIPWIRE: Check if the target was reached
             # =======================================================
             max_progress_in_batch = max(batch_episode_progresses)
-            if max_progress_in_batch >= 0.005:
+            if max_progress_in_batch >= 0.010:
                 print(f"\n[TARGET REACHED] Run successfully completed in {t_so_far} total steps!")
                 # Write this specific golden number to a clean file for your t-test
                 with open("ppo_final_results.txt", "a") as f:
