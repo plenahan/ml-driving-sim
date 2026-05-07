@@ -33,7 +33,7 @@ def run_sac_experiments(num_runs=10):
     print(f"Starting {num_runs} runs for SAC...")
     
     # Replace 'sac_main.py' with whatever you named your SAC execution file
-    sac_script_name = "sac_main.py" 
+    sac_script_name = "sac\main.py" 
     
     with open("sac_statistical_log.txt", "a") as log_file:
         for i in range(1, num_runs + 1):

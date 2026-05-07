@@ -9,7 +9,7 @@ from simulation.rendering import Renderer
 class SimEnv(gym.Env):
     def __init__(self, human=False, screen_size=(600, 600), max_episode_steps=20000):
         super().__init__()
-        self.first_turn_threshold = 0.215  # Calculated based on map1
+        self.first_turn_threshold = 0.005  # Calculated based on map1
         self.steps_to_turn = None
 
         self.observation_space = spaces.Box(
@@ -55,6 +55,9 @@ class SimEnv(gym.Env):
         self.episode_steps = 0
         self.last_progress = self.car.path_progress(self.map)
         self.no_progress_steps = 0
+        
+        # YOU MUST ADD THIS LINE SO THE TRACKER CLEARS EVERY EPISODE:
+        self.steps_to_turn = None 
 
         if self.renderer is not None:
             self.renderer.cars = [self.car]

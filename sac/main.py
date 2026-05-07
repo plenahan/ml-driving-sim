@@ -57,7 +57,7 @@ SAC_CONFIG_PARAMS_PENDULUM = {
 if __name__ == '__main__':
     np.set_printoptions(suppress=True, linewidth=np.nan)
 
-    env = SimEnv(human=False)
+    env = SimEnv(human=True)
 
     obv_space = env.observation_space
     action_space = env.action_space

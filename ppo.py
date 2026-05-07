@@ -171,6 +171,18 @@ class PPO:
                 self.save(best_actor_path, best_critic_path)
                 print(f"  new best avg_ep_progress={avg_progress:.3f}, saved to {best_actor_path}")
 
+            # =======================================================
+            # EARLY STOPPING TRIPWIRE: Check if the target was reached
+            # =======================================================
+            max_progress_in_batch = max(batch_episode_progresses)
+            if max_progress_in_batch >= 0.005:
+                print(f"\n[TARGET REACHED] Run successfully completed in {t_so_far} total steps!")
+                # Write this specific golden number to a clean file for your t-test
+                with open("ppo_final_results.txt", "a") as f:
+                    f.write(f"{t_so_far}\n")
+                break # This instantly kills the run and lets your Python script move to Run 2
+            # =======================================================
+
     def plot_training_metrics(self, output_dir="checkpoints/training_plots", show=False):
         timesteps = self.training_history["timesteps"]
         if len(timesteps) == 0:

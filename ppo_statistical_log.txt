@@ -1,33 +1,10 @@
 C:\Users\linco\anaconda3\Lib\site-packages\pygame\pkgdata.py:25: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
   from pkg_resources import resource_stream, resource_exists
-t_so_far: 32768 avg_ep_len: 6553.600 avg_ep_return: -74.660 avg_ep_progress: 0.035 log_std: ['-0.500', '-0.500', '-0.498']
-  new best avg_ep_progress=0.035, saved to checkpoints/actor_best.pt
-t_so_far: 65536 avg_ep_len: 4681.143 avg_ep_return: -75.091 avg_ep_progress: 0.012 log_std: ['-0.499', '-0.499', '-0.496']
-t_so_far: 98304 avg_ep_len: 6553.600 avg_ep_return: -85.458 avg_ep_progress: 0.003 log_std: ['-0.495', '-0.499', '-0.494']
-t_so_far: 131072 avg_ep_len: 8192.000 avg_ep_return: -81.374 avg_ep_progress: 0.022 log_std: ['-0.495', '-0.499', '-0.493']
-t_so_far: 163840 avg_ep_len: 5461.333 avg_ep_return: -70.910 avg_ep_progress: 0.015 log_std: ['-0.495', '-0.499', '-0.493']
-t_so_far: 176254 avg_ep_len: 1551.750 avg_ep_return: -65.517 avg_ep_progress: 0.000 log_std: ['-0.493', '-0.500', '-0.492']
-t_so_far: 200444 avg_ep_len: 3023.750 avg_ep_return: -73.908 avg_ep_progress: 0.003 log_std: ['-0.487', '-0.496', '-0.487']
-t_so_far: 233212 avg_ep_len: 8192.000 avg_ep_return: -81.342 avg_ep_progress: 0.023 log_std: ['-0.486', '-0.495', '-0.487']
-t_so_far: 265980 avg_ep_len: 6553.600 avg_ep_return: -74.342 avg_ep_progress: 0.048 log_std: ['-0.485', '-0.495', '-0.487']
-  new best avg_ep_progress=0.048, saved to checkpoints/actor_best.pt
-t_so_far: 298748 avg_ep_len: 8192.000 avg_ep_return: -79.727 avg_ep_progress: 0.088 log_std: ['-0.484', '-0.495', '-0.487']
-  new best avg_ep_progress=0.088, saved to checkpoints/actor_best.pt
-t_so_far: 331516 avg_ep_len: 6553.600 avg_ep_return: -73.007 avg_ep_progress: 0.101 log_std: ['-0.485', '-0.494', '-0.484']
-  new best avg_ep_progress=0.101, saved to checkpoints/actor_best.pt
-t_so_far: 364284 avg_ep_len: 8192.000 avg_ep_return: -78.036 avg_ep_progress: 0.155 log_std: ['-0.484', '-0.494', '-0.483']
-  new best avg_ep_progress=0.155, saved to checkpoints/actor_best.pt
-t_so_far: 397052 avg_ep_len: 8192.000 avg_ep_return: -77.756 avg_ep_progress: 0.167 log_std: ['-0.482', '-0.494', '-0.482']
-  new best avg_ep_progress=0.167, saved to checkpoints/actor_best.pt
-t_so_far: 429820 avg_ep_len: 4681.143 avg_ep_return: -86.680 avg_ep_progress: 0.120 log_std: ['-0.479', '-0.493', '-0.480']
-t_so_far: 460149 avg_ep_len: 3791.125 avg_ep_return: -78.142 avg_ep_progress: 0.141 log_std: ['-0.476', '-0.491', '-0.479']
-t_so_far: 492917 avg_ep_len: 6553.600 avg_ep_return: -71.163 avg_ep_progress: 0.175 log_std: ['-0.476', '-0.490', '-0.479']
-  new best avg_ep_progress=0.175, saved to checkpoints/actor_best.pt
-t_so_far: 525685 avg_ep_len: 8192.000 avg_ep_return: -77.140 avg_ep_progress: 0.191 log_std: ['-0.474', '-0.489', '-0.478']
-  new best avg_ep_progress=0.191, saved to checkpoints/actor_best.pt
-t_so_far: 558453 avg_ep_len: 6553.600 avg_ep_return: -71.064 avg_ep_progress: 0.179 log_std: ['-0.473', '-0.489', '-0.475']
-t_so_far: 589409 avg_ep_len: 3869.500 avg_ep_return: -71.413 avg_ep_progress: 0.191 log_std: ['-0.471', '-0.487', '-0.471']
-  new best avg_ep_progress=0.191, saved to checkpoints/actor_best.pt
+t_so_far: 21260 avg_ep_len: 2657.500 avg_ep_return: -76.575 avg_ep_progress: 0.000 log_std: ['-0.497', '-0.493', '-0.499']
+  new best avg_ep_progress=0.000, saved to checkpoints/actor_best.pt
+t_so_far: 54028 avg_ep_len: 8192.000 avg_ep_return: -81.834 avg_ep_progress: 0.003 log_std: ['-0.496', '-0.492', '-0.499']
+  new best avg_ep_progress=0.003, saved to checkpoints/actor_best.pt
+t_so_far: 86796 avg_ep_len: 8192.000 avg_ep_return: -81.920 avg_ep_progress: 0.000 log_std: ['-0.497', '-0.490', '-0.498']
 Traceback (most recent call last):
   File "C:\ccoms5740\ml-driving-sim\main.py", line 66, in <module>
     main()
@@ -41,190 +18,25 @@ Traceback (most recent call last):
   File "C:\ccoms5740\ml-driving-sim\ppo.py", line 102, in learn
     ) = self.rollout()
         ~~~~~~~~~~~~^^
-  File "C:\ccoms5740\ml-driving-sim\ppo.py", line 237, in rollout
-    action, pre_squash, log_probability = self.get_action(observation)
-                                          ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "C:\ccoms5740\ml-driving-sim\ppo.py", line 308, in get_action
-    distribution = self._distribution(observation_tensor)
-  File "C:\ccoms5740\ml-driving-sim\ppo.py", line 300, in _distribution
-    std = torch.exp(self.log_std).expand_as(raw_mean)
-          ~~~~~~~~~^^^^^^^^^^^^^^
-KeyboardInterrupt
-C:\Users\linco\anaconda3\Lib\site-packages\pygame\pkgdata.py:25: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
-  from pkg_resources import resource_stream, resource_exists
-t_so_far: 32768 avg_ep_len: 4681.143 avg_ep_return: -75.190 avg_ep_progress: 0.008 log_std: ['-0.497', '-0.497', '-0.498']
-  new best avg_ep_progress=0.008, saved to checkpoints/actor_best.pt
-t_so_far: 65536 avg_ep_len: 8192.000 avg_ep_return: -81.306 avg_ep_progress: 0.025 log_std: ['-0.496', '-0.494', '-0.497']
-  new best avg_ep_progress=0.025, saved to checkpoints/actor_best.pt
-t_so_far: 98304 avg_ep_len: 6553.600 avg_ep_return: -75.354 avg_ep_progress: 0.007 log_std: ['-0.495', '-0.493', '-0.497']
-t_so_far: 131072 avg_ep_len: 6553.600 avg_ep_return: -94.179 avg_ep_progress: 0.054 log_std: ['-0.495', '-0.491', '-0.495']
-  new best avg_ep_progress=0.054, saved to checkpoints/actor_best.pt
-t_so_far: 163840 avg_ep_len: 5461.333 avg_ep_return: -93.747 avg_ep_progress: 0.101 log_std: ['-0.494', '-0.492', '-0.495']
-  new best avg_ep_progress=0.101, saved to checkpoints/actor_best.pt
-t_so_far: 196608 avg_ep_len: 4681.143 avg_ep_return: -66.682 avg_ep_progress: 0.062 log_std: ['-0.486', '-0.484', '-0.489']
-t_so_far: 229376 avg_ep_len: 8192.000 avg_ep_return: -80.177 avg_ep_progress: 0.070 log_std: ['-0.485', '-0.483', '-0.487']
-t_so_far: 262144 avg_ep_len: 8192.000 avg_ep_return: -78.897 avg_ep_progress: 0.121 log_std: ['-0.484', '-0.483', '-0.487']
-  new best avg_ep_progress=0.121, saved to checkpoints/actor_best.pt
-t_so_far: 294912 avg_ep_len: 6553.600 avg_ep_return: -73.220 avg_ep_progress: 0.093 log_std: ['-0.483', '-0.482', '-0.487']
-t_so_far: 327680 avg_ep_len: 4096.000 avg_ep_return: -64.712 avg_ep_progress: 0.050 log_std: ['-0.483', '-0.480', '-0.485']
-t_so_far: 360448 avg_ep_len: 4681.143 avg_ep_return: -73.795 avg_ep_progress: 0.064 log_std: ['-0.482', '-0.479', '-0.485']
-t_so_far: 391138 avg_ep_len: 3836.250 avg_ep_return: -75.555 avg_ep_progress: 0.012 log_std: ['-0.483', '-0.481', '-0.482']
-t_so_far: 423906 avg_ep_len: 5461.333 avg_ep_return: -71.195 avg_ep_progress: 0.003 log_std: ['-0.481', '-0.482', '-0.480']
-t_so_far: 443942 avg_ep_len: 2504.500 avg_ep_return: -73.907 avg_ep_progress: 0.046 log_std: ['-0.481', '-0.482', '-0.478']
-t_so_far: 476710 avg_ep_len: 8192.000 avg_ep_return: -81.900 avg_ep_progress: 0.001 log_std: ['-0.481', '-0.481', '-0.478']
-t_so_far: 499233 avg_ep_len: 2815.375 avg_ep_return: -77.873 avg_ep_progress: 0.011 log_std: ['-0.482', '-0.481', '-0.477']
-t_so_far: 532001 avg_ep_len: 5461.333 avg_ep_return: -79.559 avg_ep_progress: 0.002 log_std: ['-0.481', '-0.478', '-0.473']
-t_so_far: 564769 avg_ep_len: 5461.333 avg_ep_return: -70.608 avg_ep_progress: 0.027 log_std: ['-0.480', '-0.480', '-0.472']
-t_so_far: 597537 avg_ep_len: 6553.600 avg_ep_return: -74.611 avg_ep_progress: 0.037 log_std: ['-0.480', '-0.480', '-0.471']
-t_so_far: 630305 avg_ep_len: 8192.000 avg_ep_return: -80.921 avg_ep_progress: 0.040 log_std: ['-0.480', '-0.479', '-0.472']
-t_so_far: 663073 avg_ep_len: 5461.333 avg_ep_return: -78.615 avg_ep_progress: 0.040 log_std: ['-0.478', '-0.478', '-0.470']
-t_so_far: 690510 avg_ep_len: 3429.625 avg_ep_return: -82.990 avg_ep_progress: 0.052 log_std: ['-0.478', '-0.478', '-0.468']
-t_so_far: 723278 avg_ep_len: 8192.000 avg_ep_return: -80.900 avg_ep_progress: 0.041 log_std: ['-0.477', '-0.479', '-0.468']
-t_so_far: 756046 avg_ep_len: 8192.000 avg_ep_return: -80.968 avg_ep_progress: 0.038 log_std: ['-0.474', '-0.478', '-0.468']
-t_so_far: 788814 avg_ep_len: 8192.000 avg_ep_return: -81.293 avg_ep_progress: 0.025 log_std: ['-0.473', '-0.478', '-0.468']
-t_so_far: 821582 avg_ep_len: 8192.000 avg_ep_return: -81.580 avg_ep_progress: 0.014 log_std: ['-0.471', '-0.477', '-0.467']
-t_so_far: 854350 avg_ep_len: 6553.600 avg_ep_return: -75.426 avg_ep_progress: 0.004 log_std: ['-0.472', '-0.476', '-0.467']
-t_so_far: 887118 avg_ep_len: 4096.000 avg_ep_return: -84.670 avg_ep_progress: 0.002 log_std: ['-0.472', '-0.477', '-0.465']
-Traceback (most recent call last):
-  File "C:\ccoms5740\ml-driving-sim\main.py", line 66, in <module>
-    main()
-    ~~~~^^
-  File "C:\ccoms5740\ml-driving-sim\main.py", line 61, in main
-    train(args.steps, args.actor_path, args.critic_path, args.best_actor_path, args.best_critic_path, args.plot_dir, args.show_plots)
-    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\ccoms5740\ml-driving-sim\main.py", line 13, in train
-    model.learn(total_steps, best_actor_path=best_actor_path, best_critic_path=best_critic_path)
-    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\ccoms5740\ml-driving-sim\ppo.py", line 102, in learn
-    ) = self.rollout()
-        ~~~~~~~~~~~~^^
-  File "C:\ccoms5740\ml-driving-sim\ppo.py", line 235, in rollout
-    value = self.critic(normalized_observation).item()
-KeyboardInterrupt
-C:\Users\linco\anaconda3\Lib\site-packages\pygame\pkgdata.py:25: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
-  from pkg_resources import resource_stream, resource_exists
-t_so_far: 32768 avg_ep_len: 6553.600 avg_ep_return: -74.898 avg_ep_progress: 0.026 log_std: ['-0.497', '-0.499', '-0.497']
-  new best avg_ep_progress=0.026, saved to checkpoints/actor_best.pt
-t_so_far: 38751 avg_ep_len: 747.875 avg_ep_return: -57.479 avg_ep_progress: 0.000 log_std: ['-0.487', '-0.496', '-0.493']
-t_so_far: 69701 avg_ep_len: 3868.750 avg_ep_return: -76.066 avg_ep_progress: 0.005 log_std: ['-0.485', '-0.496', '-0.489']
-t_so_far: 93293 avg_ep_len: 2949.000 avg_ep_return: -79.490 avg_ep_progress: 0.000 log_std: ['-0.483', '-0.494', '-0.486']
-t_so_far: 126061 avg_ep_len: 6553.600 avg_ep_return: -74.833 avg_ep_progress: 0.028 log_std: ['-0.483', '-0.493', '-0.485']
-  new best avg_ep_progress=0.028, saved to checkpoints/actor_best.pt
-t_so_far: 158829 avg_ep_len: 8192.000 avg_ep_return: -80.143 avg_ep_progress: 0.071 log_std: ['-0.484', '-0.493', '-0.484']
-  new best avg_ep_progress=0.071, saved to checkpoints/actor_best.pt
-t_so_far: 191597 avg_ep_len: 8192.000 avg_ep_return: -78.682 avg_ep_progress: 0.130 log_std: ['-0.485', '-0.492', '-0.484']
-  new best avg_ep_progress=0.130, saved to checkpoints/actor_best.pt
-t_so_far: 224365 avg_ep_len: 6553.600 avg_ep_return: -73.730 avg_ep_progress: 0.072 log_std: ['-0.486', '-0.491', '-0.482']
-t_so_far: 241507 avg_ep_len: 2142.750 avg_ep_return: -71.427 avg_ep_progress: 0.000 log_std: ['-0.485', '-0.491', '-0.481']
-t_so_far: 262436 avg_ep_len: 2616.125 avg_ep_return: -55.302 avg_ep_progress: 0.084 log_std: ['-0.485', '-0.490', '-0.480']
-t_so_far: 295204 avg_ep_len: 4096.000 avg_ep_return: -70.914 avg_ep_progress: 0.052 log_std: ['-0.481', '-0.488', '-0.476']
-t_so_far: 327972 avg_ep_len: 8192.000 avg_ep_return: -79.127 avg_ep_progress: 0.112 log_std: ['-0.481', '-0.490', '-0.474']
-t_so_far: 335935 avg_ep_len: 995.375 avg_ep_return: -59.954 avg_ep_progress: 0.000 log_std: ['-0.479', '-0.491', '-0.474']
-t_so_far: 348558 avg_ep_len: 1577.875 avg_ep_return: -65.779 avg_ep_progress: 0.000 log_std: ['-0.478', '-0.491', '-0.474']
-t_so_far: 381326 avg_ep_len: 5461.333 avg_ep_return: -79.539 avg_ep_progress: 0.003 log_std: ['-0.478', '-0.491', '-0.474']
-t_so_far: 414094 avg_ep_len: 5461.333 avg_ep_return: -96.172 avg_ep_progress: 0.004 log_std: ['-0.478', '-0.491', '-0.473']
-t_so_far: 446862 avg_ep_len: 4681.143 avg_ep_return: -74.658 avg_ep_progress: 0.029 log_std: ['-0.476', '-0.490', '-0.471']
-t_so_far: 479630 avg_ep_len: 4096.000 avg_ep_return: -84.395 avg_ep_progress: 0.013 log_std: ['-0.476', '-0.490', '-0.471']
-t_so_far: 511819 avg_ep_len: 4023.625 avg_ep_return: -89.612 avg_ep_progress: 0.025 log_std: ['-0.474', '-0.490', '-0.469']
-t_so_far: 522553 avg_ep_len: 1341.750 avg_ep_return: -62.376 avg_ep_progress: 0.042 log_std: ['-0.472', '-0.490', '-0.468']
-t_so_far: 555321 avg_ep_len: 5461.333 avg_ep_return: -87.295 avg_ep_progress: 0.026 log_std: ['-0.468', '-0.489', '-0.469']
-t_so_far: 580056 avg_ep_len: 3091.875 avg_ep_return: -79.779 avg_ep_progress: 0.046 log_std: ['-0.468', '-0.487', '-0.468']
-t_so_far: 603081 avg_ep_len: 2878.125 avg_ep_return: -77.950 avg_ep_progress: 0.033 log_std: ['-0.466', '-0.487', '-0.467']
-t_so_far: 622897 avg_ep_len: 2477.000 avg_ep_return: -73.928 avg_ep_progress: 0.034 log_std: ['-0.464', '-0.487', '-0.468']
-t_so_far: 655665 avg_ep_len: 6553.600 avg_ep_return: -74.862 avg_ep_progress: 0.027 log_std: ['-0.464', '-0.486', '-0.467']
-t_so_far: 688433 avg_ep_len: 5461.333 avg_ep_return: -87.524 avg_ep_progress: 0.017 log_std: ['-0.459', '-0.483', '-0.464']
-t_so_far: 721201 avg_ep_len: 8192.000 avg_ep_return: -79.747 avg_ep_progress: 0.087 log_std: ['-0.460', '-0.482', '-0.463']
-t_so_far: 753969 avg_ep_len: 8192.000 avg_ep_return: -81.292 avg_ep_progress: 0.025 log_std: ['-0.460', '-0.480', '-0.463']
-t_so_far: 786737 avg_ep_len: 8192.000 avg_ep_return: -81.024 avg_ep_progress: 0.036 log_std: ['-0.461', '-0.478', '-0.462']
-t_so_far: 816117 avg_ep_len: 3672.500 avg_ep_return: -74.026 avg_ep_progress: 0.008 log_std: ['-0.461', '-0.477', '-0.461']
-t_so_far: 822404 avg_ep_len: 785.875 avg_ep_return: -57.859 avg_ep_progress: 0.000 log_std: ['-0.462', '-0.477', '-0.459']
-t_so_far: 855172 avg_ep_len: 8192.000 avg_ep_return: -80.936 avg_ep_progress: 0.039 log_std: ['-0.463', '-0.476', '-0.459']
-t_so_far: 887940 avg_ep_len: 4096.000 avg_ep_return: -64.798 avg_ep_progress: 0.046 log_std: ['-0.462', '-0.476', '-0.459']
-t_so_far: 897222 avg_ep_len: 1160.250 avg_ep_return: -60.750 avg_ep_progress: 0.034 log_std: ['-0.462', '-0.476', '-0.458']
-t_so_far: 904215 avg_ep_len: 874.125 avg_ep_return: -58.064 avg_ep_progress: 0.027 log_std: ['-0.462', '-0.476', '-0.458']
-t_so_far: 914141 avg_ep_len: 1240.750 avg_ep_return: -61.841 avg_ep_progress: 0.023 log_std: ['-0.462', '-0.475', '-0.457']
-t_so_far: 926155 avg_ep_len: 1501.750 avg_ep_return: -64.237 avg_ep_progress: 0.031 log_std: ['-0.461', '-0.475', '-0.457']
-t_so_far: 954844 avg_ep_len: 3586.125 avg_ep_return: -84.952 avg_ep_progress: 0.036 log_std: ['-0.460', '-0.475', '-0.458']
-t_so_far: 987612 avg_ep_len: 5461.333 avg_ep_return: -87.906 avg_ep_progress: 0.002 log_std: ['-0.460', '-0.474', '-0.457']
-t_so_far: 1020380 avg_ep_len: 8192.000 avg_ep_return: -81.920 avg_ep_progress: 0.000 log_std: ['-0.459', '-0.474', '-0.456']
-t_so_far: 1053148 avg_ep_len: 5461.333 avg_ep_return: -71.269 avg_ep_progress: 0.000 log_std: ['-0.459', '-0.475', '-0.456']
-t_so_far: 1085916 avg_ep_len: 5461.333 avg_ep_return: -79.611 avg_ep_progress: 0.000 log_std: ['-0.459', '-0.474', '-0.456']
-t_so_far: 1118684 avg_ep_len: 8192.000 avg_ep_return: -81.887 avg_ep_progress: 0.001 log_std: ['-0.458', '-0.474', '-0.455']
-t_so_far: 1151452 avg_ep_len: 8192.000 avg_ep_return: -81.688 avg_ep_progress: 0.009 log_std: ['-0.459', '-0.473', '-0.453']
-t_so_far: 1184220 avg_ep_len: 6553.600 avg_ep_return: -105.299 avg_ep_progress: 0.009 log_std: ['-0.460', '-0.473', '-0.453']
-t_so_far: 1216988 avg_ep_len: 6553.600 avg_ep_return: -85.374 avg_ep_progress: 0.006 log_std: ['-0.459', '-0.472', '-0.452']
-t_so_far: 1249756 avg_ep_len: 8192.000 avg_ep_return: -81.826 avg_ep_progress: 0.004 log_std: ['-0.460', '-0.472', '-0.452']
-t_so_far: 1282524 avg_ep_len: 8192.000 avg_ep_return: -81.870 avg_ep_progress: 0.002 log_std: ['-0.460', '-0.473', '-0.452']
-t_so_far: 1315292 avg_ep_len: 8192.000 avg_ep_return: -81.866 avg_ep_progress: 0.002 log_std: ['-0.459', '-0.473', '-0.450']
-t_so_far: 1348060 avg_ep_len: 8192.000 avg_ep_return: -81.859 avg_ep_progress: 0.002 log_std: ['-0.459', '-0.472', '-0.449']
-t_so_far: 1380828 avg_ep_len: 8192.000 avg_ep_return: -81.787 avg_ep_progress: 0.005 log_std: ['-0.459', '-0.472', '-0.448']
-t_so_far: 1413596 avg_ep_len: 8192.000 avg_ep_return: -81.748 avg_ep_progress: 0.007 log_std: ['-0.459', '-0.472', '-0.448']
-t_so_far: 1446364 avg_ep_len: 8192.000 avg_ep_return: -81.841 avg_ep_progress: 0.003 log_std: ['-0.460', '-0.473', '-0.447']
-t_so_far: 1479132 avg_ep_len: 8192.000 avg_ep_return: -81.808 avg_ep_progress: 0.004 log_std: ['-0.460', '-0.473', '-0.447']
-t_so_far: 1511900 avg_ep_len: 8192.000 avg_ep_return: -81.864 avg_ep_progress: 0.002 log_std: ['-0.460', '-0.470', '-0.448']
-t_so_far: 1544668 avg_ep_len: 8192.000 avg_ep_return: -81.900 avg_ep_progress: 0.001 log_std: ['-0.460', '-0.470', '-0.448']
-t_so_far: 1577436 avg_ep_len: 8192.000 avg_ep_return: -81.910 avg_ep_progress: 0.000 log_std: ['-0.459', '-0.470', '-0.447']
-t_so_far: 1610204 avg_ep_len: 8192.000 avg_ep_return: -81.890 avg_ep_progress: 0.001 log_std: ['-0.458', '-0.470', '-0.446']
-Traceback (most recent call last):
-  File "C:\ccoms5740\ml-driving-sim\main.py", line 66, in <module>
-    main()
-    ~~~~^^
-  File "C:\ccoms5740\ml-driving-sim\main.py", line 61, in main
-    train(args.steps, args.actor_path, args.critic_path, args.best_actor_path, args.best_critic_path, args.plot_dir, args.show_plots)
-    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\ccoms5740\ml-driving-sim\main.py", line 13, in train
-    model.learn(total_steps, best_actor_path=best_actor_path, best_critic_path=best_critic_path)
-    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\ccoms5740\ml-driving-sim\ppo.py", line 102, in learn
-    ) = self.rollout()
-        ~~~~~~~~~~~~^^
-  File "C:\ccoms5740\ml-driving-sim\ppo.py", line 238, in rollout
+  File "C:\ccoms5740\ml-driving-sim\ppo.py", line 250, in rollout
     observation, reward, terminated, truncated, info = self.env.step(action)
                                                        ~~~~~~~~~~~~~^^^^^^^^
-  File "C:\ccoms5740\ml-driving-sim\simulation\sim_env.py", line 94, in step
-    obs = self._get_observation()
-  File "C:\ccoms5740\ml-driving-sim\simulation\sim_env.py", line 67, in _get_observation
-    path_covered, path_tangent = self.car._closest_path_segment(self.map)
-                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
-  File "C:\ccoms5740\ml-driving-sim\simulation\car.py", line 177, in _closest_path_segment
-    (dist_to_line, projected) = self.dist_to_line((x1, y1), (x2, y2))
-                                ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
-  File "C:\ccoms5740\ml-driving-sim\simulation\car.py", line 198, in dist_to_line
-    ab_len_sq = np.dot(ab, ab)
-  File "C:\Users\linco\anaconda3\Lib\site-packages\numpy\_core\multiarray.py", line 769, in dot
-    @array_function_from_c_func_and_dispatcher(_multiarray_umath.dot)
-    
-KeyboardInterrupt
-C:\Users\linco\anaconda3\Lib\site-packages\pygame\pkgdata.py:25: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
-  from pkg_resources import resource_stream, resource_exists
-C:\Users\linco\anaconda3\Lib\site-packages\pygame\pkgdata.py:25: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
-  from pkg_resources import resource_stream, resource_exists
-t_so_far: 32768 avg_ep_len: 8192.000 avg_ep_return: -81.414 avg_ep_progress: 0.020 log_std: ['-0.503', '-0.494', '-0.499']
-  new best avg_ep_progress=0.020, saved to checkpoints/actor_best.pt
-t_so_far: 65536 avg_ep_len: 6553.600 avg_ep_return: -73.961 avg_ep_progress: 0.063 log_std: ['-0.500', '-0.492', '-0.497']
-  new best avg_ep_progress=0.063, saved to checkpoints/actor_best.pt
-Traceback (most recent call last):
-  File "C:\ccoms5740\ml-driving-sim\main.py", line 66, in <module>
-    main()
-    ~~~~^^
-  File "C:\ccoms5740\ml-driving-sim\main.py", line 61, in main
-    train(args.steps, args.actor_path, args.critic_path, args.best_actor_path, args.best_critic_path, args.plot_dir, args.show_plots)
-    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\ccoms5740\ml-driving-sim\main.py", line 13, in train
-    model.learn(total_steps, best_actor_path=best_actor_path, best_critic_path=best_critic_path)
-    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\ccoms5740\ml-driving-sim\ppo.py", line 102, in learn
-    ) = self.rollout()
-        ~~~~~~~~~~~~^^
-  File "C:\ccoms5740\ml-driving-sim\ppo.py", line 238, in rollout
-    observation, reward, terminated, truncated, info = self.env.step(action)
-                                                       ~~~~~~~~~~~~~^^^^^^^^
-  File "C:\ccoms5740\ml-driving-sim\simulation\sim_env.py", line 125, in step
+  File "C:\ccoms5740\ml-driving-sim\simulation\sim_env.py", line 128, in step
     self.renderer.render()
     ~~~~~~~~~~~~~~~~~~~~^^
-  File "C:\ccoms5740\ml-driving-sim\simulation\rendering.py", line 42, in render
-    pygame.display.update()
-    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\ccoms5740\ml-driving-sim\simulation\rendering.py", line 30, in render
+    self.window.fill((0, 0, 0))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^
 KeyboardInterrupt
 C:\Users\linco\anaconda3\Lib\site-packages\pygame\pkgdata.py:25: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
   from pkg_resources import resource_stream, resource_exists
+t_so_far: 7925 avg_ep_len: 990.625 avg_ep_return: 71.454 avg_ep_progress: 0.004 log_std: ['-0.501', '-0.501', '-0.500']
+  new best avg_ep_progress=0.004, saved to checkpoints/actor_best.pt
+
+[TARGET REACHED] Run successfully completed in 7925 total steps!
+C:\Users\linco\anaconda3\Lib\site-packages\pygame\pkgdata.py:25: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  from pkg_resources import resource_stream, resource_exists
+t_so_far: 18598 avg_ep_len: 2324.750 avg_ep_return: 39.347 avg_ep_progress: 0.004 log_std: ['-0.500', '-0.503', '-0.500']
+  new best avg_ep_progress=0.004, saved to checkpoints/actor_best.pt
+
+[TARGET REACHED] Run successfully completed in 18598 total steps!
