@@ -6,7 +6,7 @@ from ppo import PPO
 from simulation.sim_env import SimEnv
 
 def train(total_steps, actor_path, critic_path, best_actor_path, best_critic_path, plot_dir=None, show_plots=False):
-    env = SimEnv(human=False)
+    env = SimEnv(human=True)
     assert(type(env.observation_space) == gym.spaces.Box)
     assert(type(env.action_space) == gym.spaces.Box)
     model = PPO(env)

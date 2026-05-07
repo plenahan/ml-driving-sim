@@ -9,6 +9,8 @@ from simulation.rendering import Renderer
 class SimEnv(gym.Env):
     def __init__(self, human=False, screen_size=(600, 600), max_episode_steps=20000):
         super().__init__()
+        self.first_turn_threshold = 0.215  # Calculated based on map1
+        self.steps_to_turn = None
 
         self.observation_space = spaces.Box(
             low=np.array(
@@ -94,6 +96,9 @@ class SimEnv(gym.Env):
         path_covered = obs[1]
         forward = obs[5]
 
+        if self.steps_to_turn is None and path_covered >= self.first_turn_threshold:
+            self.steps_to_turn = self.episode_steps
+
         self.episode_steps += 1
         path_delta = path_covered - self.last_progress
         self.last_progress = path_covered
@@ -106,7 +111,7 @@ class SimEnv(gym.Env):
 
         # --- Collision / termination ---
         collided = forward < (self.car.size[0] / 2.0)
-        finished_lap = path_covered >= 0.999
+        finished_lap = path_covered >= self.first_turn_threshold #changed to end after the first corner
         terminated = collided or finished_lap
         truncated = self.episode_steps >= self.max_episode_steps
 
@@ -125,6 +130,7 @@ class SimEnv(gym.Env):
             "speed": float(speed),
             "finished_lap": bool(finished_lap),
             "collided": bool(collided),
+            "steps_to_first_turn": self.steps_to_turn if self.steps_to_turn is not None else -1 
         }
 
         return obs, float(reward), terminated, truncated, info
