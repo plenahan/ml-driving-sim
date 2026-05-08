@@ -249,7 +249,6 @@ class PPO:
                 if done or t_so_far >= self.iterations_per_batch:
                     break
 
-            # Bootstrap if the episode wasn't terminated by the env (truncated, batch-cut, or step-cap)
             if terminated:
                 last_value = 0.0
             else:
