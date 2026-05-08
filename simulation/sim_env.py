@@ -98,13 +98,13 @@ class SimEnv(gym.Env):
         path_delta = path_covered - self.last_progress
         self.last_progress = path_covered
 
-        # --- Core reward: progress along the path ---
+        # Reward forward progress
         reward = path_delta * 25.0
 
-        # Small per-step time penalty discourages stalling without rewarding aimless speed
+        # Penalize standing still
         reward -= 0.01
 
-        # --- Collision / termination ---
+        # Collision and course completion checks
         collided = forward < (self.car.size[0] / 2.0)
         finished_lap = path_covered >= 0.999
         terminated = collided or finished_lap
